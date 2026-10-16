@@ -1,0 +1,28 @@
+2026-10-16 09:27  Could not send reminders: Add your 16-character Gmail App Password to email-config.json.
+2026-10-16 09:27  Could not send reminders: Add your 16-character Gmail App Password to email-config.json.
+2026-10-16 09:28  Could not send reminders: Add your 16-character Gmail App Password to email-config.json.
+2026-10-16 09:29  Could not send reminders: Add your 16-character Gmail App Password to email-config.json.
+2026-10-16 09:30  Could not send reminders: Add your 16-character Gmail App Password to email-config.json.
+2026-10-16 09:31  Could not send reminders: Connection unexpectedly closed
+2026-10-16 09:34  Could not send reminders: Connection unexpectedly closed
+2026-10-16 09:38  Could not send reminders: Gmail did not accept the App Password for genrykent.Villanueva@gmail.com. Make sure it was created while signed in to that same account, then create a new one and paste it into email-config.json.
+2026-10-16 09:38  Test email failed: Gmail did not accept the App Password for genrykent.Villanueva@gmail.com. Make sure it was created while signed in to that same account, then create a new one and paste it into email-config.json.
+2026-10-16 09:39  Could not send reminders: Add your 16-character Gmail App Password to email-config.json.
+2026-10-16 09:39  Test email failed: Add your 16-character Gmail App Password to email-config.json.
+2026-10-16 09:40  Test email failed: Gmail did not accept the App Password for genrykent.villanueva@gmail.com. Make sure it was created while signed in to that same account, then create a new one and paste it into email-config.json.
+2026-10-16 09:44  Could not send reminders: Gmail did not accept the App Password for genrykent.villanueva@gmail.com. Make sure it was created while signed in to that same account, then create a new one and paste it into email-config.json.
+2026-10-16 09:44  Test email failed: Gmail did not accept the App Password for genrykent.villanueva@gmail.com. Make sure it was created while signed in to that same account, then create a new one and paste it into email-config.json.
+2026-10-16 09:49  Could not send reminders: Add your Gmail address to email-config.json.
+2026-10-16 09:54  Could not send reminders: Add your Gmail address to email-config.json.
+2026-10-16 09:59  Could not send reminders: Add your Gmail address to email-config.json.
+2026-10-16 10:01  Telegram connected to Rey
+2026-10-16 10:01  Sent Telegram test message
+2026-10-16 10:06  Sent 2 reminder(s) on Telegram
+2026-10-16 10:13  Password created
+2026-10-16 10:55  Sent 1 reminder(s) on Telegram
+2026-10-16 11:00  Sent 1 reminder(s) on Telegram
+2026-10-16 11:00  Sent 1 reminder(s) on Telegram
+2026-10-16 11:02  Sent 1 reminder(s) on Telegram
+2026-10-16 11:23  Sent 1 reminder(s) on Telegram
+2026-10-16 12:47  Upgraded to multiple users: your account is now 'admin' (same password)
+2026-10-16 13:05  Database backed up to data/backups/money-tracker-2026-10-16.db

@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050208">
+  <title>Money Tracker</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='2' y='2' width='28' height='28' rx='6' fill='%235E1A96' stroke='%23B88AF2' stroke-width='1.5'/><text x='16' y='22.5' font-size='17' text-anchor='middle' fill='%23EEE6F7' font-family='Segoe UI,sans-serif' font-weight='700'>₱</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="locked">
+  <!-- Lock screen: shown until you log in -->
+  <div class="auth-screen" id="authScreen" hidden>
+    <div class="auth-card">
+      <div class="logo auth-logo">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="6" fill="#5E1A96" stroke="#B88AF2" stroke-width="1.5"/><text x="16" y="22.5" font-size="17" text-anchor="middle" fill="#EEE6F7" font-family="Segoe UI,sans-serif" font-weight="700">₱</text></svg>
+        <span class="brand">Money<span>Tracker</span></span>
+      </div>
+
+      <form class="auth-form" id="setupForm" hidden novalidate>
+        <h1>Create the admin account</h1>
+        <p class="auth-sub">You're the system admin: you'll add the other users and set up Telegram reminders.</p>
+        <label class="field"><span class="label">Your name</span>
+          <input type="text" name="name" autocomplete="name" maxlength="60" required></label>
+        <label class="field"><span class="label">Username</span>
+          <input type="text" name="username" autocomplete="username" maxlength="30" value="admin" required></label>
+        <label class="field"><span class="label">Password</span>
+          <input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+        <label class="field"><span class="label">Confirm password</span>
+          <input type="password" name="confirm" autocomplete="new-password" required></label>
+        <label class="check-row"><input type="checkbox" name="remember"><span>Keep me signed in on this device</span></label>
+        <p class="error auth-error" hidden></p>
+        <button type="submit" class="btn auth-btn">Create admin account</button>
+      </form>
+
+      <form class="auth-form" id="loginForm" hidden novalidate>
+        <h1>Welcome back</h1>
+        <p class="auth-sub">Log in with the username and password from your admin.</p>
+        <label class="field"><span class="label">Username</span>
+          <input type="text" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+        <label class="field"><span class="label">Password</span>
+          <input type="password" name="password" autocomplete="current-password" required></label>
+        <label class="check-row"><input type="checkbox" name="remember"><span>Keep me signed in on this device</span></label>
+        <p class="error auth-error" hidden></p>
+        <button type="submit" class="btn auth-btn">Log in</button>
+        <button type="button" class="link-btn auth-link" data-auth="forgot">Forgot password?</button>
+      </form>
+
+      <form class="auth-form" id="newPasswordForm" hidden novalidate>
+        <h1>Choose your password</h1>
+        <p class="auth-sub">You logged in with a temporary password. Choose your own so only you can open your account.</p>
+        <label class="field"><span class="label">New password</span>
+          <input type="password" name="password" autocomplete="new-password" minlength="8"></label>
+        <label class="field"><span class="label">Confirm new password</span>
+          <input type="password" name="confirm" autocomplete="new-password"></label>
+        <p class="error auth-error" hidden></p>
+        <button type="submit" class="btn auth-btn">Save my password</button>
+      </form>
+
+      <div class="auth-form" id="setupElsewhere" hidden>
+        <h1>Almost ready</h1>
+        <p class="auth-sub">The admin account hasn't been created yet. Open Money Tracker on the PC that runs it to create it.</p>
+      </div>
+
+      <form class="auth-form" id="forgotForm" hidden novalidate>
+        <h1>Reset your password</h1>
+        <p class="auth-sub" id="forgotSub">If your account has Telegram connected, we'll send you a 6-digit code there. No Telegram? Ask your admin to reset your password.</p>
+        <label class="field"><span class="label">Username</span>
+          <input type="text" name="username" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+        <button type="button" class="btn ghost" id="sendCode">Send code to my Telegram</button>
+        <label class="field"><span class="label">Code from Telegram</span>
+          <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456"></label>
+        <label class="field"><span class="label">New password</span>
+          <input type="password" name="password" autocomplete="new-password" minlength="8"></label>
+        <label class="field"><span class="label">Confirm new password</span>
+          <input type="password" name="confirm" autocomplete="new-password"></label>
+        <p class="error auth-error" hidden></p>
+        <p class="auth-ok" hidden></p>
+        <button type="submit" class="btn auth-btn">Reset password</button>
+        <button type="button" class="link-btn auth-link" data-auth="login">Back to log in</button>
+      </form>
+
+      <div class="auth-form" id="lockedFileMode" hidden>
+        <h1>Start Money Tracker</h1>
+        <p class="auth-sub">Your Money Tracker is password-protected. Close this tab and double-click <code>scripts/start.bat</code> in the Money Tracker folder.</p>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="inner">
+      <div class="logo">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="6" fill="#5E1A96" stroke="#B88AF2" stroke-width="1.5"/><text x="16" y="22.5" font-size="17" text-anchor="middle" fill="#EEE6F7" font-family="Segoe UI,sans-serif" font-weight="700">₱</text></svg>
+        <span class="brand">Money<span>Tracker</span></span>
+      </div>
+      <div class="header-right">
+        <nav class="tabs" aria-label="Main">
+          <button class="tab active" data-view="summary" aria-current="page">Summary</button>
+          <button class="tab" data-view="overview">Expenses</button>
+          <button class="tab" data-view="budgets">Bills</button>
+          <button class="tab" data-view="profile" data-helper-only>Profile</button>
+          <button class="tab" data-view="users" data-admin-only hidden>Users</button>
+        </nav>
+        <div class="menu-wrap">
+          <button class="icon-btn" id="menuBtn" aria-label="More options" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+          </button>
+          <div class="menu" id="menu" role="menu" hidden>
+            <div class="menu-user" id="menuUser" data-helper-only></div>
+            <button role="menuitem" data-action="export-xlsx" data-helper-only>Download Excel file</button>
+            <button role="menuitem" data-action="export-csv">Export to CSV</button>
+            <button role="menuitem" data-action="backup">Download backup</button>
+            <button role="menuitem" data-action="restore">Restore from backup</button>
+            <hr data-helper-only>
+            <button role="menuitem" data-action="change-password" data-helper-only>Change password</button>
+            <button role="menuitem" data-action="logout" data-helper-only>Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="welcome" id="welcomeBanner" hidden>
+      <span>📱 <b>Get reminders on your phone.</b> Connect Telegram in your Profile — it takes 2 minutes.</span>
+      <span class="welcome-actions">
+        <button type="button" class="btn" data-goto="profile">Set up now</button>
+        <button type="button" class="link-btn" id="welcomeLater">Later</button>
+      </span>
+    </div>
+    <div class="page-head">
+      <h1>Monthly expenses</h1>
+      <div class="month-switcher">
+        <button class="icon-btn" id="prevMonth" aria-label="Previous month">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <span class="label month-label" id="monthLabel">Month</span>
+        <button class="icon-btn" id="nextMonth" aria-label="Next month">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview: balance + Expenses / In columns -->
+    <section class="view" id="view-overview" hidden>
+      <div class="period-switch" role="group" aria-label="Period">
+        <button type="button" data-period="h1"></button>
+        <button type="button" data-period="h2"></button>
+        <button type="button" data-period="all"></button>
+      </div>
+
+      <div class="balance-card">
+        <div class="label">Total balance</div>
+        <div class="balance-value" id="balanceValue">₱0.00</div>
+        <div class="balance-split">
+          <div>
+            <div class="split-label"><span class="key key-in"></span><span id="periodInLabel">Money in this month</span></div>
+            <div class="split-value pos" id="monthIn">₱0.00</div>
+          </div>
+          <div>
+            <div class="split-label"><span class="key key-out"></span><span id="periodOutLabel">Money out this month</span></div>
+            <div class="split-value neg" id="monthOut">₱0.00</div>
+          </div>
+          <div>
+            <div class="split-label"><span class="key key-left"></span><span id="leftLabel">Left this month</span></div>
+            <div class="split-value" id="monthLeft">₱0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns">
+        <div class="column">
+          <button class="col-btn" data-add="expense">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Expenses</span>
+          </button>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Items</h2>
+              <span class="panel-meta" id="expenseMeta"></span>
+            </div>
+            <div class="items" id="expenseList"></div>
+          </div>
+        </div>
+
+        <div class="column">
+          <button class="col-btn" data-add="income">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <span>In</span>
+          </button>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Items</h2>
+              <span class="panel-meta" id="incomeMeta"></span>
+            </div>
+            <div class="items" id="incomeList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="view" id="view-summary">
+      <div class="facts">
+        <div class="fact"><span class="label">Money in</span><span class="v" id="statIn">₱0</span></div>
+        <div class="fact"><span class="label">Money out</span><span class="v" id="statOut">₱0</span></div>
+        <div class="fact"><span class="label">Net for the month</span><span class="v" id="statNet">₱0</span></div>
+        <div class="fact"><span class="label">Saved of money in</span><span class="v" id="statRate">—</span></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="card chart-card">
+          <div class="chart-head">
+            <div>
+              <h2>Money in vs. out</h2>
+              <p class="sub">Last 6 months, ending this month</p>
+            </div>
+            <div class="legend">
+              <span><i class="key key-in"></i>Money in</span>
+              <span><i class="key key-out"></i>Money out</span>
+            </div>
+          </div>
+          <div class="chart" id="chartTrend"></div>
+          <details class="table-view">
+            <summary>Show as table</summary>
+            <div id="tableTrend"></div>
+          </details>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-head">
+            <div>
+              <h2>Spending by category</h2>
+              <p class="sub" id="catSub">This month</p>
+            </div>
+          </div>
+          <div class="chart" id="chartCategory"></div>
+          <details class="table-view">
+            <summary>Show as table</summary>
+            <div id="tableCategory"></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Budgets -->
+    <section class="view" id="view-budgets" hidden>
+      <div class="card budget-total" id="budgetTotal"></div>
+
+      <div class="section-head">
+        <div>
+          <h2>Bills</h2>
+          <p class="hint">Each bill has an amount per payment, a one-time due date and/or repeating days (✏️). Clicking <b>Paid</b> deducts it from your money in.</p>
+        </div>
+        <button class="btn" data-add-cat="expense">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Add bill
+        </button>
+      </div>
+      <div id="budgetList" class="budget-list"></div>
+
+      <p class="hint pointer-hint">🔔 Telegram reminders for your bills are set up in <button type="button" class="link-btn" data-goto="profile">Profile → Telegram notifications</button>.</p>
+    </section>
+
+    <!-- Profile (every user) -->
+    <section class="view" id="view-profile" hidden>
+      <div class="card profile-card">
+        <div class="profile-head">
+          <div class="avatar" id="profAvatar" aria-hidden="true"></div>
+          <div>
+            <h2 id="profName"></h2>
+            <p class="hint">@<span id="profUsername"></span> · <span class="role-badge" id="profRole"></span></p>
+          </div>
+        </div>
+        <form id="profileForm" class="profile-form" novalidate>
+          <label class="field"><span class="label">Your name</span>
+            <input type="text" name="name" maxlength="60" autocomplete="name"></label>
+          <div class="rem-actions">
+            <button type="submit" class="btn">Save name</button>
+            <button type="button" class="btn ghost" id="profPassword">Change password</button>
+            <span class="rem-note" id="profNote"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h2>Telegram notifications</h2>
+          <p class="hint">Money Tracker sends your reminders as messages in Telegram, a free chat app for your phone.</p>
+        </div>
+      </div>
+      <div class="card reminders" id="reminders">
+        <div class="helper-status" id="helperStatus"></div>
+
+        <div class="tg-panel" id="tgNoBot" hidden>
+          <p>Telegram reminders aren't available yet: your admin still needs to set up the Money Tracker bot.</p>
+          <div class="tg-row" data-admin-only hidden><button type="button" class="btn" data-goto="users">Set up the bot (Users page)</button></div>
+        </div>
+
+        <div class="tg-guide" id="tgGuide" hidden>
+          <p class="guide-intro">Set it up once — it takes about 2 minutes:</p>
+          <ol class="guide-steps">
+            <li>
+              <b>Install Telegram</b> on your phone. It's free on the
+              <a href="https://apps.apple.com/app/telegram-messenger/id686449807" target="_blank" rel="noopener">App Store</a> and
+              <a href="https://play.google.com/store/apps/details?id=org.telegram.messenger" target="_blank" rel="noopener">Google Play</a>.
+              Open it and sign up with your mobile number. (Already have Telegram? Skip this.)
+            </li>
+            <li>
+              <b>Open the Money Tracker bot.</b> Tap the button below — it opens a chat with
+              <b id="tgBotName">the bot</b> in Telegram.
+              <div class="tg-row"><a class="btn" id="tgOpenBot" href="#" target="_blank" rel="noopener">Open the bot in Telegram</a></div>
+              <small class="field-hint">Using a computer? In Telegram on your phone, search for <b id="tgBotName3">the bot</b>, open it and send this code: <code id="tgCode">—</code></small>
+            </li>
+            <li><b>Tap Start</b> at the bottom of the chat in Telegram.</li>
+            <li>
+              <b>Come back here and tap Connect.</b>
+              <div class="tg-row"><button type="button" class="btn" id="tgConnect">Connect</button></div>
+            </li>
+            <li>You'll get <b>“✅ Connected!”</b> in Telegram. Done — tap <b>Send test message</b> below any time to check.</li>
+          </ol>
+        </div>
+
+        <div class="tg-panel tg-connected" id="tgStepDone" hidden>
+          <span>📱 Connected to <b id="tgChatName"></b> via <span id="tgBotName2"></span>.</span>
+          <button type="button" class="link-btn" id="tgDisconnect">Disconnect</button>
+        </div>
+
+        <form id="remForm" class="rem-form" novalidate>
+          <label class="switch-row">
+            <input type="checkbox" name="enabled" role="switch">
+            <span class="switch" aria-hidden="true"></span>
+            <span><b>Send me reminders on Telegram</b></span>
+          </label>
+
+          <div class="rem-options">
+            <label class="check-row">
+              <input type="checkbox" name="bills">
+              <span>Category reminders — on each reminder day at its set time, plus
+                <select name="billDaysBefore" aria-label="Early reminder">
+                  <option value="0">no early reminder</option><option value="1">1 day before</option>
+                  <option value="2">2 days before</option><option value="3">3 days before</option>
+                  <option value="5">5 days before</option><option value="7">7 days before</option>
+                </select>
+                and the day after if no payment is recorded</span>
+            </label>
+            <label class="check-row">
+              <input type="checkbox" name="budgets">
+              <span>Budget alerts — when a category reaches 80% and when it goes over</span>
+            </label>
+            <label class="check-row">
+              <input type="checkbox" name="nudge">
+              <span>Daily nudge at
+                <select name="nudgeHour" aria-label="Time of daily nudge">
+                  <option value="17">5:00 PM</option><option value="18">6:00 PM</option><option value="19">7:00 PM</option>
+                  <option value="20">8:00 PM</option><option value="21">9:00 PM</option><option value="22">10:00 PM</option>
+                </select>
+                if I haven't recorded anything that day</span>
+            </label>
+          </div>
+
+          <div class="rem-actions">
+            <button type="button" class="btn ghost" id="testMessage">Send test message</button>
+            <span class="rem-note" id="remNote"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="card info-card">
+        <h3>What you'll get on Telegram</h3>
+        <ul class="info-list">
+          <li>🔔 <b>Bill reminders</b> — on each bill's day and time (set them on the <b>Bills</b> page with ✏️), an early reminder if you choose one above, and a reminder the day after if it's still unpaid.</li>
+          <li>📈 <b>Budget alerts</b> — when spending in a category reaches 80% or goes over.</li>
+          <li>📝 <b>Daily nudge</b> — in the evening if you haven't recorded anything that day (optional).</li>
+          <li>📊 <b>Monthly summary</b> — on the 1st: money in, money out and what's left. Your month is saved to the archive.</li>
+          <li>🔐 <b>Security messages</b> — password reset codes, password changes and warnings about wrong-password attempts.</li>
+        </ul>
+        <h3>Not getting messages?</h3>
+        <ul class="info-list">
+          <li>Allow notifications for Telegram in your phone's settings, and don't mute the bot's chat.</li>
+          <li>Blocked or deleted the bot? Open it again, tap <b>Start</b>, then <b>Disconnect</b> and <b>Connect</b> here.</li>
+          <li>Tap <b>Send test message</b> above to check that messages arrive.</li>
+          <li>Messages are sent by the computer that runs Money Tracker, so it has to be on and online.</li>
+          <li>To stop messages, switch off <b>Send me reminders on Telegram</b> or tap <b>Disconnect</b>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Users (admin only) -->
+    <section class="view" id="view-users" hidden>
+      <div class="section-head">
+        <div>
+          <h2>Users</h2>
+          <p class="hint">Each person has their own expenses, bills, reminders and Excel files. Only admins see this page.</p>
+        </div>
+        <button class="btn" id="addUserBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Add user
+        </button>
+      </div>
+      <div class="user-list" id="userList"></div>
+
+      <div class="section-head">
+        <div>
+          <h2>Telegram bot (for everyone)</h2>
+          <p class="hint">One bot sends reminders to every user. Each user then connects their own phone in their Profile.</p>
+        </div>
+      </div>
+      <div class="card reminders">
+        <div class="tg-panel" id="botSetup" hidden>
+          <ol class="tg-steps">
+            <li>On your phone, open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noopener"><b>@BotFather</b></a>.</li>
+            <li>Send <code>/newbot</code>, then choose a name (e.g. <i>Money Tracker</i>) and a username ending in <i>bot</i>.</li>
+            <li>BotFather replies with a <b>token</b> like <code>123456789:AAH…</code>. Paste it here:</li>
+          </ol>
+          <div class="tg-row">
+            <input type="password" id="botToken" placeholder="Bot token" autocomplete="off" spellcheck="false" aria-label="Telegram bot token">
+            <button type="button" class="btn" id="botSave">Save token</button>
+          </div>
+        </div>
+        <div class="tg-panel tg-connected" id="botReady" hidden>
+          <span>🤖 <b id="botName"></b> is sending reminders.</span>
+          <span>
+            <button type="button" class="link-btn" id="botReplace">Use a different bot</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="section-head"><div><h2>Adding a new user</h2></div></div>
+      <div class="card info-card">
+        <ol class="info-list ordered">
+          <li>Click <b>Add user</b> and enter their name and a username. A temporary password is made for you.</li>
+          <li>Give them what's shown next — the address, their username and temporary password. <b>Copy instructions</b> puts it all in a message you can send.</li>
+          <li>When they first log in, they choose their own password. Then they open <b>Profile → Telegram notifications</b>, which walks them through connecting their phone.</li>
+          <li>Forgot their password? Use <b>Reset password</b> on their card to give them a new temporary one.</li>
+        </ol>
+        <p class="hint" id="addrHint"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026 Money<span class="accent">Tracker</span></span>
+    <span class="dot" aria-hidden="true">·</span>
+    <span>Made by <b>Rey Martin Esperida</b></span>
+  </footer>
+
+  <!-- Add / edit dialog -->
+  <dialog id="txDialog" aria-labelledby="txDialogTitle">
+    <form id="txForm" class="dlg-form" method="dialog" novalidate>
+      <div class="dialog-head">
+        <h2 id="txDialogTitle">Add expense</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <div class="segmented" role="radiogroup" aria-label="Type">
+        <label><input type="radio" name="type" value="expense" checked><span>Expense</span></label>
+        <label><input type="radio" name="type" value="income"><span>Money in</span></label>
+      </div>
+
+      <label class="field">
+        <span class="label">Amount</span>
+        <div class="amount-input">
+          <span class="prefix">₱</span>
+          <input type="text" name="amount" inputmode="decimal" autocomplete="off" placeholder="0.00" required>
+        </div>
+        <small class="error" id="amountError" hidden>Enter an amount greater than 0.</small>
+      </label>
+
+      <label class="field">
+        <span class="label">Category</span>
+        <select name="category" required></select>
+      </label>
+
+      <label class="field">
+        <span class="label">Date</span>
+        <input type="date" name="date" required>
+      </label>
+
+      <label class="field">
+        <span class="label">Note (optional)</span>
+        <input type="text" name="note" maxlength="120" placeholder="e.g. Lunch with team">
+      </label>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn danger" id="deleteTx" hidden>Delete</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Add / edit category dialog -->
+  <dialog id="catDialog" aria-labelledby="catDialogTitle">
+    <form id="catForm" class="dlg-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="catDialogTitle">New category</h2>
+        <button type="button" class="icon-btn" data-close-cat aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <label class="field">
+        <span class="label">Name</span>
+        <input type="text" name="cname" maxlength="30" placeholder="e.g. Coffee, Load, Baon" autocomplete="off">
+      </label>
+
+      <div class="cat-pay-fields" id="payFields">
+        <label class="field">
+          <span class="label">Amount per payment</span>
+          <div class="amount-input small">
+            <span class="prefix">₱</span>
+            <input type="text" name="camount" inputmode="decimal" placeholder="0.00" autocomplete="off">
+          </div>
+        </label>
+        <label class="field">
+          <span class="label">One-time due date</span>
+          <div class="date-row">
+            <input type="date" name="cdate">
+            <button type="button" class="link-btn" id="clearDate">Clear</button>
+          </div>
+        </label>
+      </div>
+
+      <fieldset class="field rem-field" id="dueField">
+        <legend class="label">Repeat every month (optional)</legend>
+        <div class="day-grid" id="dayGrid" role="group" aria-label="Reminder days of the month"></div>
+        <div class="rem-time-row">
+          <label for="ctime">Remind me at</label>
+          <input type="time" id="ctime" name="ctime" value="09:00" required>
+          <button type="button" class="link-btn" id="clearDays">Clear days</button>
+        </div>
+        <small class="field-hint" id="remSummary"></small>
+      </fieldset>
+
+      <fieldset class="field icon-field">
+        <legend class="label">Icon</legend>
+        <div class="icon-grid" id="iconGrid"></div>
+      </fieldset>
+
+      <small class="error" id="catError" hidden></small>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn danger" id="deleteCat" hidden>Delete</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" data-close-cat>Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Add / edit user (admin) -->
+  <dialog id="userDialog" aria-labelledby="userDialogTitle">
+    <form id="userForm" class="dlg-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="userDialogTitle">Add user</h2>
+        <button type="button" class="icon-btn" data-close-user aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <label class="field"><span class="label">Name</span>
+        <input type="text" name="name" maxlength="60" placeholder="e.g. Maria Santos"></label>
+      <label class="field"><span class="label">Username (for logging in)</span>
+        <input type="text" name="username" maxlength="30" autocapitalize="none" spellcheck="false" placeholder="e.g. maria"></label>
+      <label class="field"><span class="label">Role</span>
+        <select name="role">
+          <option value="user">User — their own expenses, bills and reminders</option>
+          <option value="admin">Admin — also manages users and the Telegram bot</option>
+        </select></label>
+      <small class="error" id="userError" hidden></small>
+      <div class="dialog-actions">
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" data-close-user>Cancel</button>
+        <button type="submit" class="btn" id="userSave">Add user</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- What to give a new user -->
+  <dialog id="credDialog" aria-labelledby="credDialogTitle">
+    <div class="dlg-form">
+      <div class="dialog-head">
+        <h2 id="credDialogTitle">Give these to the user</h2>
+        <button type="button" class="icon-btn" data-close-cred aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="cred-box">
+        <div><span class="label">Username</span><b id="credUser"></b></div>
+        <div><span class="label">Temporary password</span><b id="credPass"></b></div>
+      </div>
+      <label class="field"><span class="label">Message to send them</span>
+        <textarea id="credText" rows="12" readonly></textarea></label>
+      <div class="dialog-actions">
+        <span class="rem-note" id="credNote"></span>
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" data-close-cred>Done</button>
+        <button type="button" class="btn" id="credCopy">Copy instructions</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Excel download dialog -->
+  <dialog id="xlsDialog" aria-labelledby="xlsDialogTitle">
+    <form id="xlsForm" class="dlg-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="xlsDialogTitle">Download Excel file</h2>
+        <button type="button" class="icon-btn" data-close-xls aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <p class="auth-sub" style="text-align:left;margin:0">Every money in and out is saved in your database. Each month is closed on the 1st and also saved in <code>data/archive</code>.</p>
+      <label class="field">
+        <span class="label">Month</span>
+        <select name="month" id="xlsMonth"></select>
+      </label>
+      <p class="field-hint" id="xlsInfo"></p>
+      <div class="dialog-actions">
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" data-close-xls>Cancel</button>
+        <button type="submit" class="btn">Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Change password dialog -->
+  <dialog id="pwDialog" aria-labelledby="pwDialogTitle">
+    <form id="pwForm" class="dlg-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="pwDialogTitle">Change password</h2>
+        <button type="button" class="icon-btn" data-close-pw aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <label class="field"><span class="label">Current password</span>
+        <input type="password" name="current" autocomplete="current-password"></label>
+      <label class="field"><span class="label">New password</span>
+        <input type="password" name="password" autocomplete="new-password" minlength="8"></label>
+      <label class="field"><span class="label">Confirm new password</span>
+        <input type="password" name="confirm" autocomplete="new-password"></label>
+      <small class="error" id="pwError" hidden></small>
+      <div class="dialog-actions">
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" data-close-pw>Cancel</button>
+        <button type="submit" class="btn">Change password</button>
+      </div>
+    </form>
+  </dialog>
+
+  <input type="file" id="restoreFile" accept="application/json,.json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

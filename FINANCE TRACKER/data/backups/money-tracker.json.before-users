@@ -1,0 +1,141 @@
+{
+  "transactions": [
+    {
+      "id": "mvadfkvqc8p5th",
+      "created": 1792119086198,
+      "type": "income",
+      "amount": 1350000,
+      "category": "Salary",
+      "date": "2026-10-16",
+      "note": ""
+    },
+    {
+      "id": "mvadh5ilbo33ht",
+      "created": 1792119159597,
+      "type": "expense",
+      "amount": 135000,
+      "category": "Claude Subscription",
+      "date": "2026-10-16",
+      "note": ""
+    },
+    {
+      "id": "mvadk9e8eyr4yz",
+      "created": 1792119304592,
+      "type": "expense",
+      "amount": 250000,
+      "category": "SunLife",
+      "date": "2026-10-16",
+      "note": "Payment due Thu, Oct 29",
+      "dueFor": "2026-10-29"
+    }
+  ],
+  "budgets": {},
+  "categories": {
+    "income": [
+      {
+        "name": "Salary",
+        "icon": "💼"
+      },
+      {
+        "name": "Business",
+        "icon": "🏪"
+      },
+      {
+        "name": "Freelance",
+        "icon": "💻"
+      },
+      {
+        "name": "Gift",
+        "icon": "🎁"
+      },
+      {
+        "name": "Interest",
+        "icon": "🏦"
+      },
+      {
+        "name": "Other income",
+        "icon": "💰"
+      }
+    ],
+    "expense": [
+      {
+        "name": "SunLife",
+        "icon": "📈",
+        "reminder": {
+          "days": [
+            14,
+            29
+          ],
+          "time": "09:00"
+        },
+        "amount": 65000
+      },
+      {
+        "name": "Saint Petter",
+        "icon": "🏦",
+        "reminder": {
+          "days": [
+            14,
+            29
+          ],
+          "time": "09:00"
+        },
+        "amount": 25000
+      },
+      {
+        "name": "Claude Subscription",
+        "icon": "💰",
+        "reminder": {
+          "days": [
+            13
+          ],
+          "time": "09:00"
+        },
+        "amount": 141120
+      },
+      {
+        "name": "Coop Savings",
+        "icon": "💳",
+        "reminder": {
+          "days": [
+            14,
+            27
+          ],
+          "time": "09:00"
+        },
+        "amount": 150000
+      },
+      {
+        "name": "CBU Contribution",
+        "icon": "💰",
+        "reminder": {
+          "days": [
+            13,
+            27
+          ],
+          "time": "09:00"
+        },
+        "amount": 100000
+      },
+      {
+        "name": "Shopee",
+        "icon": "🛒",
+        "reminder": {
+          "days": [],
+          "date": "2026-11-15",
+          "time": "09:00"
+        },
+        "amount": 273838
+      }
+    ]
+  },
+  "reminders": {
+    "enabled": true,
+    "bills": true,
+    "billDaysBefore": 2,
+    "budgets": true,
+    "nudge": false,
+    "nudgeHour": 20,
+    "email": "esperida.reymartin@gmail.com"
+  }
+}

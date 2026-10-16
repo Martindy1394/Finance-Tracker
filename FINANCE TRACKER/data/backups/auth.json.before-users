@@ -1,0 +1,10 @@
+{
+  "password": {
+    "salt": "ba0acf54eb3e3152d716ebda331c2d42",
+    "hash": "64e6c8f0e4185bee78d503efd563c900cd82946cb2de14fc99419f466f47ff81",
+    "rounds": 300000
+  },
+  "sessions": {
+    "f3f00f6d7fa07cbe2db645ee75ae58fbd4bdd28780bbc8e0b35d79da4e3e45d6": "2026-11-15T10:13:52"
+  }
+}
